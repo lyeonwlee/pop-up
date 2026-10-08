@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <title>ODD PLATE POP-UP BOOK</title>
+  <link rel="stylesheet" href="popup-book.css?v=26">
+  <script src="popup-book.js?v=13" defer></script>
+</head>
+<body>
+  <main class="scene">
+    <p class="eyebrow">ODD PLATE / POP-UP No.01</p>
+
+    <div class="book-control page-one-current" id="book-control" role="group" tabindex="0" data-page="1"
+      aria-label="드래그하여 책 회전, 클릭하여 펼치기">
+      <div class="book-shadow" aria-hidden="true"></div>
+
+      <div class="book" aria-hidden="true">
+        <div class="back-cover"></div>
+        <div class="page-block"></div>
+
+        <div class="leaf-stack leaf-stack-left" aria-hidden="true">
+          <span class="paper-leaf"></span>
+          <span class="paper-leaf"></span>
+          <span class="paper-leaf"></span>
+        </div>
+        <div class="leaf-stack leaf-stack-right" aria-hidden="true">
+          <span class="paper-leaf"></span>
+          <span class="paper-leaf"></span>
+          <span class="paper-leaf"></span>
+        </div>
+
+        <section class="page right-page page-one-only">
+          <span class="scribble scribble-a">✳</span>
+          <span class="scribble scribble-b">✦</span>
+          <span class="sticker-word word-one">YUM?</span>
+          <span class="sticker-word word-two">ODD!</span>
+          <div class="plate-ring"></div>
+        </section>
+
+        <div class="popup-layer popup-burst page-one-only">
+          <svg viewBox="0 0 260 180">
+            <path d="M16 118 58 96 34 55l54 13 16-51 34 40 42-33 2 52 59-3-37 42 40 31-61 1-13 29-36-25-48 26-1-43-69-16Z"/>
+          </svg>
+        </div>
+
+        <div class="popup-layer popup-star page-one-only">
+          <img src="assets/star-original.png" alt="">
+        </div>
+
+        <div class="popup-layer popup-label page-one-only">
+          <span>MAKE IT<br>ODD!</span>
+        </div>
+
+        <div class="food-popup tomato page-one-only"><span></span></div>
+        <div class="food-popup egg page-one-only"><span></span></div>
+
+        <div class="front-cover">
+          <div class="cover-face">
+            <span class="cover-kicker">A VERY STRANGE</span>
+            <strong>POP!<br>PLATE</strong>
+            <span class="cover-star">✳</span>
+            <span class="cover-edition">01 / ODD PRESS</span>
+          </div>
+          <div class="cover-inside page">
+            <span class="inside-copy">OPEN<br>WIDE</span>
+            <span class="inside-flower">✽</span>
+            <span class="inside-arrow">↗</span>
+          </div>
+        </div>
+
+        <div class="back-cover-display">
+          <span class="back-cover-mark">＊</span>
+          <strong>ODD<br>PLATE.</strong>
+          <small>BACK COVER / 04</small>
+        </div>
+
+        <section class="book-spread spread-one" data-spread="1">
+          <div class="spread-sheet spread-left">
+            <strong>OPEN<br>WIDE</strong>
+            <span class="first-egg"><i></i></span>
+            <span class="first-flower">✱</span>
+          </div>
+          <div class="spread-sheet spread-right">
+            <span class="first-plate"></span>
+            <span class="first-tomato">✳</span>
+            <span class="mini-label">YUM?</span>
+          </div>
+          <div class="standing-popup first-popup">MAKE IT<br>ODD!</div>
+        </section>
+
+        <section class="book-spread spread-two" data-spread="2">
+          <div class="spread-sheet spread-left">
+            <strong>ODD<br>STAR</strong>
+            <span class="page-doodle">✦</span>
+          </div>
+          <div class="spread-sheet spread-right">
+            <span class="huge-number">02</span>
+            <span class="ring-doodle"></span>
+          </div>
+          <div class="standing-popup star-standing">
+            <img src="assets/star-original.png" alt="">
+          </div>
+        </section>
+
+        <section class="book-spread spread-three" data-spread="3">
+          <div class="spread-sheet spread-left">
+            <strong>MIX</strong>
+            <span class="mini-label">PICK ONE</span>
+          </div>
+          <div class="spread-sheet spread-right">
+            <strong>MATCH</strong>
+            <span class="mini-label">MAKE IT WEIRD</span>
+          </div>
+          <div class="module-popup module-a">2</div>
+          <div class="module-popup module-b">4</div>
+          <div class="module-popup module-c">6</div>
+        </section>
+
+        <section class="book-spread spread-four" data-spread="4">
+          <div class="spread-sheet spread-left">
+            <strong>THE</strong>
+            <span class="end-star">＊</span>
+          </div>
+          <div class="spread-sheet spread-right">
+            <strong>END?</strong>
+            <span class="page-doodle">✳</span>
+          </div>
+          <div class="standing-popup final-popup">ODD<br>FOREVER</div>
+        </section>
+
+        <div class="page-turner" aria-hidden="true">
+          <div class="turn-face turn-front"><span>ODD</span></div>
+          <div class="turn-face turn-back"><span>PLATE</span></div>
+        </div>
+
+        <div class="spine"></div>
+      </div>
+    </div>
+
+    <button class="page-arrow previous-page" type="button" aria-label="이전 페이지">←</button>
+    <span class="page-status" id="page-status" aria-live="polite">01 / 04</span>
+    <button class="page-arrow next-page" type="button" aria-label="다음 페이지">→</button>
+
+    <div class="drag-note" id="book-instruction" aria-hidden="true">
+      CLICK COVER TO LAY DOWN
+    </div>
+  </main>
+</body>
+</html>
