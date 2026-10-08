@@ -22,10 +22,13 @@ let moved = false;
 let dragAxis = null;
 let animationFrame = 0;
 let tiltAnimationFrame = 0;
+let popupAnimationFrame = 0;
 let turning = false;
 let showingBackCover = false;
 let coverOpened = false;
 let coverAnimating = false;
+let popupAnimating = false;
+let popupProgress = 0;
 
 const clamp = value => Math.min(1, Math.max(0, value));
 
@@ -33,11 +36,13 @@ const renderBook = () => {
   root.style.setProperty('--open', openness.toFixed(3));
   root.style.setProperty('--view-x', rotationX.toFixed(2));
   root.style.setProperty('--view-y', rotationY.toFixed(2));
+  root.style.setProperty('--popup', popupProgress.toFixed(3));
   scene.classList.toggle('is-book-open', coverOpened);
   scene.classList.toggle('is-book-laid', bookLaidDown);
   scene.classList.toggle('is-cover-inner-side', openness >= .5);
   scene.classList.toggle('is-cover-opened', coverOpened);
-  bookInstruction.textContent = coverAnimating
+  scene.classList.toggle('is-page-visible', openness >= .5);
+  bookInstruction.textContent = coverAnimating || popupAnimating || turning
     ? ''
     : coverOpened
     ? 'DRAG TO ROTATE / TILT · CLICK LEFT / RIGHT TO TURN'
@@ -86,21 +91,25 @@ const animateOpen = target => {
   cancelAnimationFrame(animationFrame);
   coverAnimating = true;
   coverOpened = false;
+  if (target >= 1) popupProgress = 0;
   const from = openness;
   const startedAt = performance.now();
-  const duration = 420;
+  const duration = 560;
   renderBook();
 
   const tick = now => {
     const elapsed = Math.min(1, (now - startedAt) / duration);
     const eased = 1 - Math.pow(1 - elapsed, 3);
     openness = clamp(from + (target - from) * eased);
+    if (target >= 1) popupProgress = clamp((openness - .5) * 2);
+    else popupProgress = 0;
     renderBook();
     if (elapsed < 1) {
       animationFrame = requestAnimationFrame(tick);
     } else {
       coverAnimating = false;
       coverOpened = target >= 1;
+      popupProgress = target >= 1 ? 1 : 0;
       renderBook();
     }
   };
@@ -108,12 +117,43 @@ const animateOpen = target => {
   animationFrame = requestAnimationFrame(tick);
 };
 
-const finishClosing = () => {
+const animatePopups = (target, onComplete, duration = 420) => {
+  cancelAnimationFrame(popupAnimationFrame);
+  const from = popupProgress;
+  const startedAt = performance.now();
+  popupAnimating = true;
+  renderBook();
+
+  const tick = now => {
+    const elapsed = Math.min(1, (now - startedAt) / duration);
+    const eased = elapsed < .5
+      ? 4 * elapsed * elapsed * elapsed
+      : 1 - Math.pow(-2 * elapsed + 2, 3) / 2;
+    popupProgress = clamp(from + (target - from) * eased);
+    renderBook();
+
+    if (elapsed < 1) {
+      popupAnimationFrame = requestAnimationFrame(tick);
+    } else {
+      popupAnimating = false;
+      popupProgress = target;
+      renderBook();
+      if (onComplete) onComplete();
+    }
+  };
+
+  popupAnimationFrame = requestAnimationFrame(tick);
+};
+
+const finishClosedBook = () => {
+  bookLaidDown = false;
+  rotationY = 0;
+  animateTilt(0);
   window.setTimeout(() => {
     turning = false;
     renderPage();
     renderBook();
-  }, 980);
+  }, 540);
 };
 
 const closeToFront = () => {
@@ -122,32 +162,24 @@ const closeToFront = () => {
   showingBackCover = false;
   control.classList.remove('show-back-cover');
   renderPage();
-  animateOpen(0);
-
-  window.setTimeout(() => {
-    bookLaidDown = false;
-    rotationY = 0;
-    animateTilt(0);
-  }, 430);
-
-  finishClosing();
+  animatePopups(0, () => {
+    animateOpen(0);
+    window.setTimeout(finishClosedBook, 430);
+  });
 };
 
 const closeToBack = () => {
   if (turning || !coverOpened) return;
   turning = true;
   renderPage();
-  animateOpen(0);
-
-  window.setTimeout(() => {
-    showingBackCover = true;
-    control.classList.add('show-back-cover');
-    bookLaidDown = false;
-    rotationY = 0;
-    animateTilt(0);
-  }, 430);
-
-  finishClosing();
+  animatePopups(0, () => {
+    animateOpen(0);
+    window.setTimeout(() => {
+      showingBackCover = true;
+      control.classList.add('show-back-cover');
+      finishClosedBook();
+    }, 430);
+  });
 };
 
 const openFromBack = () => {
@@ -175,23 +207,27 @@ const goToPage = page => {
   const direction = nextPage > currentPage ? 'next' : 'previous';
   turning = true;
   renderPage();
-  pageTurner.classList.remove('turn-next', 'turn-previous');
-  pageTurner.classList.add(direction === 'next' ? 'turn-next' : 'turn-previous');
-
-  window.setTimeout(() => {
-    currentPage = nextPage;
-    renderPage();
-  }, 270);
-
-  window.setTimeout(() => {
+  animatePopups(0, () => {
     pageTurner.classList.remove('turn-next', 'turn-previous');
-    turning = false;
-    renderPage();
-  }, 580);
+    pageTurner.classList.add(direction === 'next' ? 'turn-next' : 'turn-previous');
+
+    window.setTimeout(() => {
+      currentPage = nextPage;
+      renderPage();
+    }, 270);
+
+    window.setTimeout(() => {
+      pageTurner.classList.remove('turn-next', 'turn-previous');
+      animatePopups(1, () => {
+        turning = false;
+        renderPage();
+      });
+    }, 580);
+  });
 };
 
 control.addEventListener('pointerdown', event => {
-  if (coverAnimating || turning) return;
+  if (coverAnimating || popupAnimating || turning) return;
   dragging = true;
   moved = false;
   dragAxis = null;
@@ -245,7 +281,7 @@ control.addEventListener('pointercancel', () => {
 });
 
 control.addEventListener('keydown', event => {
-  if (coverAnimating || turning) return;
+  if (coverAnimating || popupAnimating || turning) return;
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
     if (!bookLaidDown) layDownBook();
