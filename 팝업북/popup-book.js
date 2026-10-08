@@ -33,6 +33,7 @@ const renderBook = () => {
   root.style.setProperty('--view-y', rotationY.toFixed(2));
   scene.classList.toggle('is-book-open', openness > .92);
   scene.classList.toggle('is-book-laid', bookLaidDown);
+  scene.classList.toggle('is-cover-clear', openness > .62);
   bookInstruction.textContent = openness > .92
     ? 'DRAG TO ROTATE / TILT · CLICK LEFT / RIGHT TO TURN'
     : bookLaidDown

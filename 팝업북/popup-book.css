@@ -215,6 +215,7 @@ body {
     translateZ(calc(9px - var(--open) * 9px))
     rotateY(calc(var(--open) * -179deg));
   transition: opacity 180ms ease, visibility 180ms ease;
+  will-change: transform;
 }
 
 .front-cover::before,
@@ -307,7 +308,10 @@ body {
   inset: 0;
   overflow: hidden;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
   clip-path: none;
+  will-change: transform;
 }
 
 .cover-face {
@@ -318,10 +322,11 @@ body {
     inset 0 0 0 9px #f7f7f4,
     inset 0 0 0 10px #d8d8d2,
     0 4px 0 #d7d7d2;
+  transform: translateZ(.5px);
 }
 
 .cover-inside {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(.5px);
 }
 
 .right-page::after,
@@ -568,9 +573,15 @@ body {
 }
 
 .book-spread.is-active {
-  opacity: var(--open);
+  opacity: 1;
   visibility: visible;
   transform: translateZ(8px) rotateY(0deg);
+}
+
+.scene:not(.is-cover-clear) .book-spread.is-active,
+.scene:not(.is-cover-clear) .paper-leaf {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .spread-sheet {
