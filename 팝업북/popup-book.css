@@ -169,7 +169,7 @@ body {
   box-shadow: 0 var(--paper-thickness) 0 var(--paper-edge);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 120ms linear, visibility 120ms linear;
+  transition: none;
 }
 
 .paper-leaf:nth-child(1) { transform: translateZ(6px); }
@@ -313,6 +313,13 @@ body {
   clip-path: none;
   will-change: transform;
 }
+
+.cover-inside { visibility: hidden; }
+
+.scene.is-cover-inner-side .cover-face { visibility: hidden; }
+.scene.is-cover-inner-side .cover-inside { visibility: visible; }
+
+.cover-inside > * { display: none; }
 
 .cover-face {
   border: 0;
@@ -556,7 +563,7 @@ body {
   visibility: hidden;
   transform: translateZ(8px) rotateY(5deg);
   transform-origin: 50% 50%;
-  transition: opacity 160ms ease, transform 240ms cubic-bezier(.22, .72, .2, 1), visibility 160ms ease;
+  transition: transform 240ms cubic-bezier(.22, .72, .2, 1);
   pointer-events: none;
 }
 
@@ -578,8 +585,8 @@ body {
   transform: translateZ(8px) rotateY(0deg);
 }
 
-.scene:not(.is-cover-clear) .book-spread.is-active,
-.scene:not(.is-cover-clear) .paper-leaf {
+.scene:not(.is-cover-opened) .book-spread.is-active,
+.scene:not(.is-cover-opened) .paper-leaf {
   opacity: 0;
   visibility: hidden;
 }

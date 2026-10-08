@@ -24,6 +24,8 @@ let animationFrame = 0;
 let tiltAnimationFrame = 0;
 let turning = false;
 let showingBackCover = false;
+let coverOpened = false;
+let coverAnimating = false;
 
 const clamp = value => Math.min(1, Math.max(0, value));
 
@@ -31,10 +33,13 @@ const renderBook = () => {
   root.style.setProperty('--open', openness.toFixed(3));
   root.style.setProperty('--view-x', rotationX.toFixed(2));
   root.style.setProperty('--view-y', rotationY.toFixed(2));
-  scene.classList.toggle('is-book-open', openness > .92);
+  scene.classList.toggle('is-book-open', coverOpened);
   scene.classList.toggle('is-book-laid', bookLaidDown);
-  scene.classList.toggle('is-cover-clear', openness > .62);
-  bookInstruction.textContent = openness > .92
+  scene.classList.toggle('is-cover-inner-side', openness >= .5);
+  scene.classList.toggle('is-cover-opened', coverOpened);
+  bookInstruction.textContent = coverAnimating
+    ? ''
+    : coverOpened
     ? 'DRAG TO ROTATE / TILT · CLICK LEFT / RIGHT TO TURN'
     : bookLaidDown
       ? 'CLICK AGAIN TO OPEN'
@@ -79,16 +84,25 @@ const renderPage = () => {
 
 const animateOpen = target => {
   cancelAnimationFrame(animationFrame);
+  coverAnimating = true;
+  coverOpened = false;
   const from = openness;
   const startedAt = performance.now();
   const duration = 420;
+  renderBook();
 
   const tick = now => {
     const elapsed = Math.min(1, (now - startedAt) / duration);
     const eased = 1 - Math.pow(1 - elapsed, 3);
     openness = clamp(from + (target - from) * eased);
     renderBook();
-    if (elapsed < 1) animationFrame = requestAnimationFrame(tick);
+    if (elapsed < 1) {
+      animationFrame = requestAnimationFrame(tick);
+    } else {
+      coverAnimating = false;
+      coverOpened = target >= 1;
+      renderBook();
+    }
   };
 
   animationFrame = requestAnimationFrame(tick);
@@ -103,7 +117,7 @@ const finishClosing = () => {
 };
 
 const closeToFront = () => {
-  if (turning || openness < .92) return;
+  if (turning || !coverOpened) return;
   turning = true;
   showingBackCover = false;
   control.classList.remove('show-back-cover');
@@ -120,7 +134,7 @@ const closeToFront = () => {
 };
 
 const closeToBack = () => {
-  if (turning || openness < .92) return;
+  if (turning || !coverOpened) return;
   turning = true;
   renderPage();
   animateOpen(0);
@@ -145,7 +159,7 @@ const openFromBack = () => {
 };
 
 const goToPage = page => {
-  if (turning || openness < .92) return;
+  if (turning || !coverOpened) return;
   if (page < 1) {
     closeToFront();
     return;
@@ -177,6 +191,7 @@ const goToPage = page => {
 };
 
 control.addEventListener('pointerdown', event => {
+  if (coverAnimating || turning) return;
   dragging = true;
   moved = false;
   dragAxis = null;
@@ -196,10 +211,10 @@ control.addEventListener('pointermove', event => {
     moved = true;
     if (!dragAxis) dragAxis = Math.abs(deltaX) >= Math.abs(deltaY) ? 'horizontal' : 'vertical';
   }
-  if (dragAxis === 'horizontal' && openness > .92) {
+  if (dragAxis === 'horizontal' && coverOpened) {
     rotationY = startRotationY + deltaX * .18;
   }
-  if (dragAxis === 'vertical' && openness > .92) {
+  if (dragAxis === 'vertical' && coverOpened) {
     rotationX = Math.min(75, Math.max(45, startRotationX - deltaY * .12));
   }
   renderBook();
@@ -212,7 +227,7 @@ control.addEventListener('pointerup', event => {
   control.releasePointerCapture(event.pointerId);
   if (!moved) {
     if (!bookLaidDown) layDownBook();
-    else if (openness < .92) {
+    else if (!coverOpened) {
       if (showingBackCover) openFromBack();
       else animateOpen(1);
     }
@@ -230,10 +245,11 @@ control.addEventListener('pointercancel', () => {
 });
 
 control.addEventListener('keydown', event => {
+  if (coverAnimating || turning) return;
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
     if (!bookLaidDown) layDownBook();
-    else if (openness < .92) {
+    else if (!coverOpened) {
       if (showingBackCover) openFromBack();
       else animateOpen(1);
     }
