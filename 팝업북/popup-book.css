@@ -733,9 +733,8 @@ body {
   width: 24%;
   transform-origin: 50% 100%;
   transform:
-    translateZ(calc(2px + var(--popup) * 48px))
-    rotateX(calc(var(--popup) * -68deg))
-    translateY(calc(var(--popup) * -34%));
+    translateZ(2px)
+    rotateX(calc(var(--popup) * -90deg));
   filter: drop-shadow(
     calc(var(--popup) * 18px)
     calc(var(--popup) * 22px)
@@ -759,7 +758,7 @@ body {
   clip-path: polygon(0 100%, 50% 0, 100% 100%);
   transform-origin: 50% 0;
   transform:
-    rotateX(calc(var(--popup) * 68deg))
+    rotateX(calc(var(--popup) * 90deg))
     scaleY(calc(.02 + var(--popup) * .98));
 }
 
@@ -834,30 +833,27 @@ body {
   left: 26%;
   bottom: 31%;
   transform:
-    translateZ(calc(2px + var(--popup) * 36px))
-    rotateX(calc(var(--popup) * -66deg))
-    rotateZ(calc(var(--popup) * -8deg))
-    translateY(calc(var(--popup) * -24%));
+    translateZ(2px)
+    rotateX(calc(var(--popup) * -90deg))
+    rotateZ(calc(var(--popup) * -8deg));
 }
 
 .module-b {
   left: 43%;
   bottom: 43%;
   transform:
-    translateZ(calc(2px + var(--popup) * 44px))
-    rotateX(calc(var(--popup) * -74deg))
-    rotateZ(calc(var(--popup) * 3deg))
-    translateY(calc(var(--popup) * -31%));
+    translateZ(2px)
+    rotateX(calc(var(--popup) * -90deg))
+    rotateZ(calc(var(--popup) * 3deg));
 }
 
 .module-c {
   left: 61%;
   bottom: 28%;
   transform:
-    translateZ(calc(2px + var(--popup) * 32px))
-    rotateX(calc(var(--popup) * -64deg))
-    rotateZ(calc(var(--popup) * 9deg))
-    translateY(calc(var(--popup) * -22%));
+    translateZ(2px)
+    rotateX(calc(var(--popup) * -90deg))
+    rotateZ(calc(var(--popup) * 9deg));
 }
 
 .end-star {
