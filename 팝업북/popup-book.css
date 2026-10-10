@@ -222,7 +222,7 @@ body {
     translateZ(calc(9px - var(--open) * 9px))
     rotateY(calc(var(--open) * -180deg));
   transition: opacity 180ms ease, visibility 180ms ease;
-  box-shadow: 0 7px 0 #d7d7d2;
+  box-shadow: none;
   will-change: transform;
 }
 
@@ -246,7 +246,11 @@ body {
 }
 
 .front-cover::after {
-  display: none;
+  left: -7px;
+  right: -8px;
+  bottom: -7px;
+  height: 7px;
+  background: #d7d7d2;
 }
 
 .cover-face,
