@@ -30,6 +30,7 @@ let coverAnimating = false;
 let popupAnimating = false;
 let popupProgress = 0;
 let pageVisible = false;
+let closingToBack = false;
 
 const clamp = value => Math.min(1, Math.max(0, value));
 
@@ -43,6 +44,7 @@ const renderBook = () => {
   scene.classList.toggle('is-cover-inner-side', openness >= .5);
   scene.classList.toggle('is-cover-opened', coverOpened);
   scene.classList.toggle('is-page-visible', pageVisible);
+  scene.classList.toggle('is-closing-to-back', closingToBack);
   bookInstruction.textContent = coverAnimating || popupAnimating || turning
     ? ''
     : coverOpened
@@ -178,16 +180,19 @@ const closeToBack = () => {
   turning = true;
   renderPage();
   animatePopups(0, () => {
+    closingToBack = true;
     animateOpen(0);
     window.setTimeout(() => {
       showingBackCover = true;
       control.classList.add('show-back-cover');
+      closingToBack = false;
       finishClosedBook();
     }, 580);
   });
 };
 
 const openFromBack = () => {
+  closingToBack = false;
   showingBackCover = false;
   control.classList.remove('show-back-cover');
   currentPage = 4;

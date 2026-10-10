@@ -347,6 +347,16 @@ body {
   transform: translateZ(.5px);
 }
 
+.scene.is-closing-to-back .cover-face > *,
+.scene.is-closing-to-back .cover-face::before {
+  display: none;
+}
+
+.scene.is-closing-to-back .cover-face {
+  background: #fbfbf8;
+  box-shadow: 0 var(--paper-thickness) 0 var(--paper-edge);
+}
+
 .cover-inside {
   transform: rotateY(180deg) translateZ(.5px);
 }
