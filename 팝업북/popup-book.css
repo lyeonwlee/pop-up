@@ -270,7 +270,7 @@ body {
   opacity: 0;
   visibility: hidden;
   transform: translateZ(10px);
-  transition: opacity 180ms ease, visibility 180ms ease;
+  transition: none;
 }
 
 .back-cover-display strong {
@@ -299,8 +299,7 @@ body {
 }
 
 .book-control.show-back-cover .front-cover {
-  opacity: 0;
-  visibility: hidden;
+  display: none;
 }
 
 .book-control.show-back-cover .back-cover,
@@ -308,11 +307,11 @@ body {
 .book-control.show-back-cover .book-spread,
 .book-control.show-back-cover .leaf-stack,
 .book-control.show-back-cover .page-turner {
-  opacity: 0;
-  visibility: hidden;
+  display: none;
 }
 
 .book-control.show-back-cover .back-cover-display {
+  display: block;
   opacity: 1;
   visibility: visible;
 }
