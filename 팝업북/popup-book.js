@@ -24,13 +24,11 @@ let animationFrame = 0;
 let tiltAnimationFrame = 0;
 let popupAnimationFrame = 0;
 let turning = false;
-let showingBackCover = false;
 let coverOpened = false;
 let coverAnimating = false;
 let popupAnimating = false;
 let popupProgress = 0;
 let pageVisible = false;
-let closingToBack = false;
 
 const clamp = value => Math.min(1, Math.max(0, value));
 
@@ -44,16 +42,13 @@ const renderBook = () => {
   scene.classList.toggle('is-cover-inner-side', openness >= .5);
   scene.classList.toggle('is-cover-opened', coverOpened);
   scene.classList.toggle('is-page-visible', pageVisible);
-  scene.classList.toggle('is-closing-to-back', closingToBack);
   bookInstruction.textContent = coverAnimating || popupAnimating || turning
     ? ''
     : coverOpened
     ? 'DRAG TO ROTATE / TILT · CLICK LEFT / RIGHT TO TURN'
     : bookLaidDown
       ? 'CLICK AGAIN TO OPEN'
-      : showingBackCover
-        ? 'CLICK BACK COVER TO LAY DOWN'
-        : 'CLICK COVER TO LAY DOWN';
+      : 'CLICK COVER TO LAY DOWN';
 };
 
 const animateTilt = target => {
@@ -166,38 +161,11 @@ const finishClosedBook = () => {
 const closeToFront = () => {
   if (turning || !coverOpened) return;
   turning = true;
-  showingBackCover = false;
-  control.classList.remove('show-back-cover');
   renderPage();
   animatePopups(0, () => {
     animateOpen(0);
     window.setTimeout(finishClosedBook, 580);
   });
-};
-
-const closeToBack = () => {
-  if (turning || !coverOpened) return;
-  turning = true;
-  renderPage();
-  animatePopups(0, () => {
-    closingToBack = true;
-    animateOpen(0);
-    window.setTimeout(() => {
-      showingBackCover = true;
-      control.classList.add('show-back-cover');
-      closingToBack = false;
-      finishClosedBook();
-    }, 580);
-  });
-};
-
-const openFromBack = () => {
-  closingToBack = false;
-  showingBackCover = false;
-  control.classList.remove('show-back-cover');
-  currentPage = 4;
-  renderPage();
-  animateOpen(1);
 };
 
 const goToPage = page => {
@@ -207,7 +175,7 @@ const goToPage = page => {
     return;
   }
   if (page > 4) {
-    closeToBack();
+    closeToFront();
     return;
   }
 
@@ -274,8 +242,7 @@ control.addEventListener('pointerup', event => {
   if (!moved) {
     if (!bookLaidDown) layDownBook();
     else if (!coverOpened) {
-      if (showingBackCover) openFromBack();
-      else animateOpen(1);
+      animateOpen(1);
     }
     else {
       const bounds = control.getBoundingClientRect();
@@ -296,8 +263,7 @@ control.addEventListener('keydown', event => {
     event.preventDefault();
     if (!bookLaidDown) layDownBook();
     else if (!coverOpened) {
-      if (showingBackCover) openFromBack();
-      else animateOpen(1);
+      animateOpen(1);
     }
   }
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
