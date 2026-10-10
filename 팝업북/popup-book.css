@@ -102,6 +102,7 @@ body {
 
 .back-cover {
   position: absolute;
+  z-index: -10;
   inset: 0;
   border: 0;
   background: #f7f7f4;
@@ -109,6 +110,10 @@ body {
   transform-origin: 100% 50%;
   transform: translateZ(-5px) scaleX(.5);
   clip-path: none;
+}
+
+.scene.is-cover-opened .back-cover {
+  transform: translateZ(-5px) scaleX(1);
 }
 
 .page-block {
@@ -219,7 +224,7 @@ body {
   transform-origin: 0 50%;
   transform:
     translateZ(calc(9px - var(--open) * 9px))
-    rotateY(calc(var(--open) * -179deg));
+    rotateY(calc(var(--open) * -180deg));
   transition: opacity 180ms ease, visibility 180ms ease;
   will-change: transform;
 }
@@ -250,6 +255,10 @@ body {
   height: 8px;
   transform-origin: 50% 0;
   transform: rotateX(-90deg);
+}
+
+.scene.is-cover-opened .front-cover::after {
+  display: none;
 }
 
 .cover-face,
