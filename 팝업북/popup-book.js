@@ -29,6 +29,7 @@ let coverOpened = false;
 let coverAnimating = false;
 let popupAnimating = false;
 let popupProgress = 0;
+let pageVisible = false;
 
 const clamp = value => Math.min(1, Math.max(0, value));
 
@@ -41,7 +42,7 @@ const renderBook = () => {
   scene.classList.toggle('is-book-laid', bookLaidDown);
   scene.classList.toggle('is-cover-inner-side', openness >= .5);
   scene.classList.toggle('is-cover-opened', coverOpened);
-  scene.classList.toggle('is-page-visible', openness >= .5);
+  scene.classList.toggle('is-page-visible', pageVisible);
   bookInstruction.textContent = coverAnimating || popupAnimating || turning
     ? ''
     : coverOpened
@@ -91,7 +92,10 @@ const animateOpen = target => {
   cancelAnimationFrame(animationFrame);
   coverAnimating = true;
   coverOpened = false;
-  if (target >= 1) popupProgress = 0;
+  pageVisible = false;
+  if (target >= 1) {
+    popupProgress = 0;
+  }
   const from = openness;
   const startedAt = performance.now();
   const duration = 560;
@@ -101,16 +105,17 @@ const animateOpen = target => {
     const elapsed = Math.min(1, (now - startedAt) / duration);
     const eased = 1 - Math.pow(1 - elapsed, 3);
     openness = clamp(from + (target - from) * eased);
-    if (target >= 1) popupProgress = clamp((openness - .5) * 2);
-    else popupProgress = 0;
+    popupProgress = 0;
     renderBook();
     if (elapsed < 1) {
       animationFrame = requestAnimationFrame(tick);
     } else {
       coverAnimating = false;
       coverOpened = target >= 1;
-      popupProgress = target >= 1 ? 1 : 0;
+      pageVisible = target >= 1;
       renderBook();
+      if (target >= 1) animatePopups(1);
+      else pageVisible = false;
     }
   };
 
@@ -164,7 +169,7 @@ const closeToFront = () => {
   renderPage();
   animatePopups(0, () => {
     animateOpen(0);
-    window.setTimeout(finishClosedBook, 430);
+    window.setTimeout(finishClosedBook, 580);
   });
 };
 
@@ -178,7 +183,7 @@ const closeToBack = () => {
       showingBackCover = true;
       control.classList.add('show-back-cover');
       finishClosedBook();
-    }, 430);
+    }, 580);
   });
 };
 

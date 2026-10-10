@@ -107,7 +107,7 @@ body {
   background: #f7f7f4;
   box-shadow: 0 7px 0 #d7d7d2;
   transform-origin: 100% 50%;
-  transform: translateZ(-5px) scaleX(calc(.5 + var(--open) * .5));
+  transform: translateZ(-5px) scaleX(.5);
   clip-path: none;
 }
 
@@ -118,11 +118,14 @@ body {
   background: #f3f3ef;
   transform-style: preserve-3d;
   transform-origin: 100% 50%;
-  transform: translateZ(0) scaleX(calc(.5 + var(--open) * .5));
-  transition: opacity 120ms linear;
+  transform: translateZ(0) scaleX(.5);
+  transition: none;
 }
 
-.scene.is-book-open .page-block { opacity: 0; }
+.scene.is-cover-inner-side .page-block {
+  opacity: 0;
+  visibility: hidden;
+}
 
 .page-block::before,
 .page-block::after {
